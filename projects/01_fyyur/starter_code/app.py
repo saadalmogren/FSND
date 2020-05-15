@@ -191,6 +191,7 @@ def show_venue(venue_id):
             "artist_name": artist.name,
             "artist_image_link": artist.image_link,
             #stfrtime() turns datetime object to string to be used by the parser 
+            #taken from https://stackoverflow.com/questions/10624937/convert-datetime-object-to-a-string-of-date-only-in-python
             "start_time": show.start_time.strftime('%Y-%m-%d %H:%M:%S')
         })
 
@@ -243,6 +244,8 @@ def create_venue_submission():
 
     try:
         name = venue_form.name.data
+        #turn the city name to sentence case format eg. san francisco to San Francisco
+        #taken from https://stackoverflow.com/questions/8347048/how-to-convert-string-to-title-case-in-python
         city = venue_form.city.data.title()
         state = venue_form.state.data
         address = venue_form.address.data
