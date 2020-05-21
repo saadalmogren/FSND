@@ -19,13 +19,15 @@
 		</p>
 		<p>
 			<i class="fas fa-phone-alt"></i> {% if artist.phone %}{{ artist.phone }}{% else %}No Phone{% endif %}
-        </p>
-        <p>
-			<i class="fas fa-link"></i> {% if artist.website %}<a href="{{ artist.website }}" target="_blank">{{ artist.website }}</a>{% else %}No Website{% endif %}
 		</p>
 		<p>
-			<i class="fab fa-facebook-f"></i> {% if artist.facebook_link %}<a href="{{ artist.facebook_link }}" target="_blank">{{ artist.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
-        </p>
+			<i class="fas fa-link"></i> {% if artist.website %}<a href="{{ artist.website }}"
+				target="_blank">{{ artist.website }}</a>{% else %}No Website{% endif %}
+		</p>
+		<p>
+			<i class="fab fa-facebook-f"></i> {% if artist.facebook_link %}<a href="{{ artist.facebook_link }}"
+				target="_blank">{{ artist.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
+		</p>
 		{% if artist.seeking_venue %}
 		<div class="seeking">
 			<p class="lead">Currently seeking performance venues</p>
@@ -33,18 +35,31 @@
 				<i class="fas fa-quote-left"></i> {{ artist.seeking_description }} <i class="fas fa-quote-right"></i>
 			</div>
 		</div>
-		{% else %}	
+		{% else %}
 		<p class="not-seeking">
 			<i class="fas fa-moon"></i> Not currently seeking performance venues
 		</p>
 		{% endif %}
+		{% if artist.availability_count > 0 %}
+		<i class="fas fa-ban"></i> {{ artist.name }} is not available at these dates
+		{% for date in artist.availability %}
+		<p>{{ date.start_date }} To {{date.end_date}}</p>
+		{% endfor %}
+		{% else %}
+		<p> {{artist.name}}  is available  </p>
+		{% endif %}
+		<a href="/artists/{{artist.id}}/aviliability"><button class="btn btn-default btn-lg">Edit
+				availablity</button></a>
 	</div>
+
 	<div class="col-sm-6">
 		<img src="{{ artist.image_link }}" alt="Artist Image" />
 	</div>
+
 </div>
 <section>
-	<h2 class="monospace">{{ artist.upcoming_shows_count }} Upcoming {% if artist.upcoming_shows_count == 1 %}Show{% else %}Shows{% endif %}</h2>
+	<h2 class="monospace">{{ artist.upcoming_shows_count }} Upcoming
+		{% if artist.upcoming_shows_count == 1 %}Show{% else %}Shows{% endif %}</h2>
 	<div class="row">
 		{%for show in artist.upcoming_shows %}
 		<div class="col-sm-4">
@@ -58,7 +73,8 @@
 	</div>
 </section>
 <section>
-	<h2 class="monospace">{{ artist.past_shows_count }} Past {% if artist.past_shows_count == 1 %}Show{% else %}Shows{% endif %}</h2>
+	<h2 class="monospace">{{ artist.past_shows_count }} Past
+		{% if artist.past_shows_count == 1 %}Show{% else %}Shows{% endif %}</h2>
 	<div class="row">
 		{%for show in artist.past_shows %}
 		<div class="col-sm-4">
@@ -73,4 +89,3 @@
 </section>
 
 {% endblock %}
-

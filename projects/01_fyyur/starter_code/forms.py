@@ -1,9 +1,12 @@
 from datetime import datetime
-from flask_wtf import Form
-from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField,BooleanField
-from wtforms.validators import DataRequired, AnyOf, URL
+from flask_wtf import FlaskForm
+from wtforms.fields import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
+from wtforms.validators import DataRequired, AnyOf, URL, ValidationError
+from wtforms.fields.html5 import DateField
+from wtforms_components import DateRange
 
-class ShowForm(Form):
+
+class ShowForm(FlaskForm):
     artist_id = StringField(
         'artist_id', validators=[DataRequired()] 
     )
@@ -16,7 +19,7 @@ class ShowForm(Form):
         default= datetime.today()
     )
 
-class VenueForm(Form):
+class VenueForm(FlaskForm):
     name = StringField(
         'name', validators=[DataRequired()]
     )
@@ -126,7 +129,7 @@ class VenueForm(Form):
         'seeking_description'
     )
 
-class ArtistForm(Form):
+class ArtistForm(FlaskForm):
     name = StringField(
         'name', validators=[DataRequired()]
     )
@@ -234,5 +237,15 @@ class ArtistForm(Form):
     seeking_description = StringField(
         'seeking_description'
     )
+   
+
+class avilabilityForm(FlaskForm):
+    start_date = DateField(
+        'start_date',default= datetime.today()
+    )
+    end_date = DateField(
+        'end_date',default= datetime.today(), validators = [DataRequired()]
+    )
+    
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
