@@ -45,7 +45,7 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get('/questions?page=100')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 404)
-        self.assertEqual(data['message']), 'not found')
+        self.assertEqual(data['message'], 'resource not found')
     
     def test_delete_questions_success(self):
         res = self.client().delete('/questions/17')
@@ -58,7 +58,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
-        self.assertEqual(data['message']), 'not found')
+        self.assertEqual(data['message'], 'resource not found')
 
     def test_create_questions_success(self):
         res = self.client().post('/questions', json={'question': 'test', 'answer': 'test', 'difficulty': 4, 'category': 1})
@@ -71,7 +71,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
         
         self.assertEqual(res.status_code, 405)
-        self.assertEqual(data['message']), 'method not allowed')
+        self.assertEqual(data['message'], 'method not allowed')
 
 
     def test_search_questions_success(self):
@@ -101,7 +101,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
         
         self.assertEqual(res.status_code, 404)
-        self.assertEqual(data['message']), 'not found')
+        self.assertEqual(data['message'], 'resource not found')
 
 
     def test_get_quizzes_success(self):
