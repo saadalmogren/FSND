@@ -153,7 +153,7 @@ def create_app(test_config=None):
         body = request.get_json()
         if body is None:
             abort(422)
-        term = body.get('searchTerm','')
+        term = body.get('searchTerm', '')
         questions = Question.query.filter(Question.question.ilike(f'%{term}%'))
 
         format = [quest.format() for quest in questions]
