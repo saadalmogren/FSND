@@ -2,21 +2,21 @@ import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from models import Movie, Actor, Role
+from models import setup_db,Movie, Actor, Role
 
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     CORS(app)
-
+    setup_db(app)
     return app
 
 
-APP = create_app()
+app = create_app()
 
 
-@app.route('actors')
+@app.route('/actors')
 def get_actors():
     actors = Actor.query.all()
     if actors is None:
@@ -31,7 +31,7 @@ def get_actors():
     })
 
 
-@app.route('movies')
+@app.route('/movies')
 def get_movies():
     movies = Movie.query.all()
     if movies is None:
@@ -42,11 +42,11 @@ def get_movies():
     movie_format = [movie.format() for movie in movies]
     return jsonify({
         'success': True,
-        'movies': actors_format
+        'movies': movie_format
     })
 
 
-@app.route('actors/<int:actor_id>', methods=['DELETE'])
+@app.route('/actors/<int:actor_id>', methods=['DELETE'])
 def delete_actor(actor_id):
     actor = Actor.query.get(actor_id)
     if actor is None:
@@ -58,7 +58,7 @@ def delete_actor(actor_id):
     })
 
 
-@app.route('movies/<int:movie_id>', methods=['DELETE'])
+@app.route('/movies/<int:movie_id>', methods=['DELETE'])
 def delete_movie(movie_id):
     movie = Movie.query.get(movie_id)
     if movie is None:
@@ -70,7 +70,7 @@ def delete_movie(movie_id):
     })
 
 
-@app.route('actors', methods=['POST'])
+@app.route('/actors', methods=['POST'])
 def create_actor():
     body = request.get_json()
     if 'name' not in body or 'age' in body or 'gender' not in body:
@@ -89,7 +89,7 @@ def create_actor():
     })
 
 
-@app.route('movies', methods=['POST'])
+@app.route('/movies', methods=['POST'])
 def create_movie():
     body = request.get_json()
     if 'title' not in body or 'release_date' not in body:
@@ -104,7 +104,7 @@ def create_movie():
     })
 
 
-@app.route('actors/<int:actor_id>', methods=['PATCH'])
+@app.route('/actors/<int:actor_id>', methods=['PATCH'])
 def modify_actor(actor_id):
     actor = Actor.query.get(actor_id)
     if actor is None:
@@ -127,7 +127,7 @@ def modify_actor(actor_id):
     })
 
 
-@app.route('movies/<int:movie_id>', methods=['PATCH'])
+@app.route('/movies/<int:movie_id>', methods=['PATCH'])
 def modify_movie(movie_id):
     movie = Movie.query.get(movie_id)
     if movie is None:
