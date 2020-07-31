@@ -19,14 +19,14 @@ def setup_db(app, database_path=database_path):
 
 class Movie(db.Model):
     __tablename__ = "movies"
-    id = db.Column(Integer, primary_key=True)
-    title = db.Column(String, nullable=False)
-    release_date = db.Column(Date, nullable=False)
-    roles = db.relationship('Actor', backref='movie',
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(), nullable=False)
+    release_date = db.Column(db.Date(), nullable=False)
+    roles = db.relationship('Role', backref='movie',
                             lazy=True, cascade='all, delete')
 
     def __init__(self, title, release_date):
-        self.question = question
+        
         self.title = title
         self.release_date = release_date
 
@@ -51,11 +51,11 @@ class Movie(db.Model):
 
 class Actor(db.Model):
     __tablename__ = "actors"
-    id = db.Column(Integer, primary_key=True)
-    name = db.Column(String, nullable=False)
-    age = db.Column(Integer, nullable=False)
-    gender = db.Column(String, nullable=False)
-    roles = db.relationship('Actor', backref='actor',
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    gender = db.Column(db.String(), nullable=False)
+    roles = db.relationship('Role', backref='actor',
                             lazy=True, cascade='all, delete')
     def __init__(self, name, age, gender):
         self.name = name
@@ -83,9 +83,10 @@ class Actor(db.Model):
 
 
 class Role(db.Model):
-    name = db.Column(String, primary_key=True)
-    movie_id = db.Column(Integer, db.ForeignKey('movies.id'), primary_key=True)
-    actor_id = db.Column(Integer, db.ForeignKey('actors.id'), primary_key=True)
+    __tablename__ = "roles"
+    name = db.Column(db.String(), primary_key=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'), primary_key=True)
+    actor_id = db.Column(db.Integer, db.ForeignKey('actors.id'), primary_key=True)
     def __init__(self, name, movie_id, actor_id):
         self.name = name
         self.movie_id = movie_id
