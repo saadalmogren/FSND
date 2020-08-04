@@ -3,7 +3,15 @@ from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from models import setup_db,Movie, Actor, Role
+ITEMS_PER_PAGE = 10
+def paginate(request, selection):
+    page = request.args.get('page', 1, type=int)
+    start = (page - 1) * ITEMS_PER_PAGE
+    end = start + ITEMS_PER_PAGE
 
+    items = [item.format() for item in selection]
+
+    return items[start:end]
 
 def create_app(test_config=None):
     # create and configure the app
@@ -14,12 +22,10 @@ def create_app(test_config=None):
     @app.route('/actors')
     def get_actors():
         actors = Actor.query.all()
-        if actors is None:
-            return jsonify({
-                'success': True,
-                'actors': None
-            })
-        actors_format = [actor.format() for actor in actors]
+        actors_format = paginate(request, actors)
+
+        if len(actors_format) == 0:
+            abort(404)
         return jsonify({
             'success': True,
             'actors': actors_format
@@ -29,12 +35,9 @@ def create_app(test_config=None):
     @app.route('/movies')
     def get_movies():
         movies = Movie.query.all()
-        if movies is None:
-            return jsonify({
-                'success': True,
-                'movies': None
-            })
-        movie_format = [movie.format() for movie in movies]
+        movie_format = paginate(request, movies)
+        if len(movie_format)==0:
+            abort(404)
         return jsonify({
             'success': True,
             'movies': movie_format
@@ -68,7 +71,7 @@ def create_app(test_config=None):
     @app.route('/actors', methods=['POST'])
     def create_actor():
         body = request.get_json()
-        if 'name' not in body or 'age' in body or 'gender' not in body:
+        if 'name' not in body or 'age' not in body or 'gender' not in body:
             abort(422)
         name = body.get('name')
         age = body.get('age')
@@ -105,7 +108,7 @@ def create_app(test_config=None):
         if actor is None:
             abort(404)
         body = request.get_json()
-        if 'name' not in body or 'age' in body or 'gender' not in body:
+        if 'name' not in body or 'age' not in body or 'gender' not in body:
             abort(422)
 
         try:
@@ -117,7 +120,7 @@ def create_app(test_config=None):
             abort(422)
 
         return jsonify({
-            'sucess': True,
+            'success': True,
             'actor': actor.format()
         })
 
@@ -128,7 +131,7 @@ def create_app(test_config=None):
         if movie is None:
             abort(404)
         body = request.get_json()
-        if 'title' not in body or 'release_date' in body:
+        if 'title' not in body or 'release_date' not in body:
             abort(422)
 
         try:
@@ -139,11 +142,34 @@ def create_app(test_config=None):
             abort(422)
 
         return jsonify({
-            'sucess': True,
+            'success': True,
             'movie': movie.format()
         })
 
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            'success': False,
+            'error': 404,
+            'message': 'RESOURCE NOT FOUND!'
 
+        }),404
+    @app.errorhandler(422)
+    def unproccesable(error):
+        return jsonify({
+            'success': False,
+            'error': 422,
+            'message': 'UNPROCESSABLE ENTITY!'
+
+        }),422
+    @app.errorhandler(405)
+    def not_allowed(error):
+        return jsonify({
+            'success': False,
+            'error': 405,
+            'message': 'METHOD NOT ALLOWED!'
+
+        }),405
     if __name__ == '__main__':
         app.run(host='0.0.0.0', port=8080, debug=True)
     return app
